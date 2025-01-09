@@ -10,6 +10,7 @@ import org.springframework.boot.web.server.WebServer;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
@@ -31,15 +32,26 @@ public class HellobootApplication {
         // 익명클래스 코드를 전체완성해준다(인텔리제이가)
         // functional interface
         WebServer webServer = serverFactory.getWebServer(servletContext -> {
-            servletContext.addServlet("hello", new HttpServlet() {
+            servletContext.addServlet("frountController", new HttpServlet() {
                 @Override
                 protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-                    String name = req.getParameter("name");
-                    resp.setStatus(HttpStatus.OK.value());
-                    resp.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE);
-                    resp.getWriter().println("Hello " + name);
+                    // 인증, 보안, 다국어, 공통 기능을 처리한다 (프론트 컨트롤러)
+                    System.out.println(req.getRequestURL());
+                    System.out.println(req.getMethod());
+                    if(req.getRequestURL().toString().equals("/hello") && req.getMethod().equals(HttpMethod.GET.name())) {
+                        String name = req.getParameter("name");
+                        resp.setStatus(HttpStatus.OK.value());
+                        resp.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE);
+                        resp.getWriter().println("Hello " + name);
+                    }
+                    else if(req.getRequestURL().toString().equals("/user")  && req.getMethod().equals("GET")) {
+                        //
+                    }
+                    else {
+                        resp.setStatus(HttpStatus.NOT_FOUND.value());
+                    }
                 }
-            }).addMapping("/hello");
+            }).addMapping("/*");
         });  // 톰캣외 제티 등 서블릿 컨테이너를 지원하기 위함(추상화)
         webServer.start();
 
