@@ -1,58 +1,37 @@
 package tobyspring.helloboot;
 
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.WebServer;
-import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.web.context.support.GenericWebApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
-import java.io.IOException;
-
 // @SpringBootApplication
+// @Configuration  : config정보, 구성정보를 가지고 있는 클래스라는걸 명시하는 어노테이션
+// 애플리케이션 컨텍스트에 처음 등록된다.  BeanFactory Method를 가지는 것 이상으로
+// 전체 애플리케이션을 구성하는데 필됴한 중요한 정보들을 많이 넣을 수 있기 때문이다.
+@Configuration
+@ComponentScan // @component 어노테이션이 등록된 빈들을 모두 등록해준다.
 public class HellobootApplication {
 
-    public static void main(String[] args) {
-
-        // 스프링 컨테이너
-        GenericWebApplicationContext applicationContext = new GenericWebApplicationContext();
-        // 관례와몇가지 룰을 통해 알아서 다 해주는 걸 지향한다.
-        applicationContext.registerBean(HelloController.class);   // 빈등록
-        applicationContext.registerBean(SimplHelloService.class); // 빈등록
-        applicationContext.refresh();                             // 빈 오브젝트 생성
-
-
-        System.out.println("Hello Containerless Standalone Application");
-        // SpringApplication.run(HellobootApplication.class, args);
-
-        // 스프링부트가 톰캣 서블릿컨테이너를 쉽게 사용할 수 있게 만들어준 클래스
-        // Factory : 생성과정+ 설정을 마침을 예상할 수 있음
-        // 스프링 컨테이너는 빈을 재사용할 수 있는 기능을 제공한다.
-        // ServletWebServerFactory : 추상화
-        ServletWebServerFactory serverFactory = new TomcatServletWebServerFactory();
-
-
-        // 익명클래스 코드를 전체완성해준다(인텔리제이가)
-        // functional interface
-        WebServer webServer = serverFactory.getWebServer(servletContext -> {
-            servletContext.addServlet("dispatcherServlet",
-                    new DispatcherServlet(applicationContext)
-                    ).addMapping("/*");
-        });  // 톰캣외 제티 등 서블릿 컨테이너를 지원하기 위함(추상화)
-        webServer.start();
-
-
+    @Bean
+    public ServletWebServerFactory servletWebServerFactory() {
+        return new TomcatServletWebServerFactory();
     }
+
+    @Bean DispatcherServlet dispatcherServlet() {
+        return new DispatcherServlet();
+    }
+
+
+    public static void main(String[] args) {
+        SpringApplication.run(HellobootApplication.class, args);
+    }
+
+
 
 }
