@@ -24,8 +24,12 @@ public class HelloController {
         // @RestController 어노테이션 사용 시 특별한 행동이 없을 경우 @ResponseBody가 기본설정으로 쓰인다.
         // dispatcher servlet은 view(화면)을 찾으려고 하기 때문에 이대로는 오류가 발생한다.
         if(name == null || name.trim().length() == 0) throw new IllegalArgumentException();
-
         return helloService.sayHello(name);
+    }
+
+    @GetMapping("/count")
+    public String count(String name) {
+        return name + ": " + helloService.countOf(name);
     }
 
 

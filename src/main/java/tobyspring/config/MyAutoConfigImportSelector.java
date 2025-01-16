@@ -1,15 +1,13 @@
 package tobyspring.config;
 
-import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.boot.context.annotation.ImportCandidates;
 import org.springframework.context.annotation.DeferredImportSelector;
 import org.springframework.core.type.AnnotationMetadata;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.StreamSupport;
 
+// user구성정보가 모두 로딩된 후 자동구성정보를 적용하도록 만듬
 public class MyAutoConfigImportSelector implements DeferredImportSelector {
 
     private final ClassLoader classLoader;
